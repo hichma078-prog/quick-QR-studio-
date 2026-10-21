@@ -237,9 +237,17 @@
         document.body.removeChild(link);
       }
     }
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js');
+<script>
+  window.onload = init;
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js');
+    });
+  }
+</script>
+</body>
+</html>
   });
 }
     window.onload = init;
