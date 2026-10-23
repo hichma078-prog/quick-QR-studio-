@@ -31,8 +31,15 @@
                     QuickQR Studio
                 </span>
             </div>
+            
             <div class="flex items-center gap-2">
-                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <!-- زر تثبيت التطبيق المباشر -->
+                <button id="install-pwa-btn" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all animate-pulse">
+                    <i class="fa-solid fa-download"></i>
+                    <span>تثبيت التطبيق</span>
+                </button>
+                
+                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hidden md:inline-block">
                     أداة مجانية 100%
                 </span>
             </div>
@@ -126,6 +133,7 @@
     <script>
         let qrCodeInstance = null;
         let currentType = 'url';
+        let deferredPrompt = null;
 
         function init() {
             const qrTextElem = document.getElementById('qr-text');
@@ -253,12 +261,36 @@
 
         window.onload = init;
 
-        // Service Worker Registration for PWA
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => console.log('PWA Ready'))
                     .catch(err => console.log('PWA Error', err));
+            });
+        }
+
+        // Catch PWA Install Prompt
+        const installBtn = document.getElementById('install-pwa-btn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.classList.remove('hidden');
+                installBtn.classList.add('flex');
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installBtn.classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                }
             });
         }
     </script>
