@@ -130,9 +130,9 @@
     <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
         <div class="max-w-4xl mx-auto px-4 space-y-4">
             <div class="flex justify-center gap-6 text-slate-400 font-medium">
-                <a href="#privacy" onclick="alert(currentLang === 'ar' ? 'سياسة الخصوصية: نحن لا نخزن أي بيانات شخصية أو رموز QR يتم إنشاؤها عبر موقعنا.' : 'Privacy Policy: We do not store any personal data or generated QR codes on our server.')" class="hover:text-indigo-400 transition-all" id="footer-privacy">سياسة الخصوصية</a>
+                <a href="privacy.html" class="hover:text-indigo-400 transition-all" id="footer-privacy">سياسة الخصوصية</a>
                 <span>•</span>
-                <a href="mailto:support@quickqr.studio" class="hover:text-indigo-400 transition-all" id="footer-contact">تواصل معنا</a>
+                <a href="contact.html" class="hover:text-indigo-400 transition-all" id="footer-contact">تواصل معنا</a>
             </div>
             <p id="footer-rights">© 2026 QuickQR Studio. جميع الحقوق محفوظة.</p>
         </div>
@@ -332,12 +332,13 @@
             }
 
             if (imageSrc) {
-                const link = document.createElement('a');
-                link.href = imageSrc;
-                link.download = 'quick-qr-code.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const link = document.getElementById('a');
+                const linkElem = document.createElement('a');
+                linkElem.href = imageSrc;
+                linkElem.download = 'quick-qr-code.png';
+                document.body.appendChild(linkElem);
+                linkElem.click();
+                document.body.removeChild(linkElem);
             }
         }
 
