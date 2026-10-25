@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickQR Studio - مولد أكواد QR السريع والمجاني</title>
+    <title>QuickQR Studio - مولد وقارئ أكواد QR السريع</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Tajawal', 'Inter', sans-serif; }
@@ -18,18 +19,16 @@
     <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg">
                     <i class="fa-solid fa-qrcode text-xl"></i>
                 </div>
                 <span class="font-extrabold text-xl tracking-tight text-white">QuickQR Studio</span>
             </div>
             <div class="flex items-center gap-3">
-                <!-- زر تثبيت التطبيق على الهاتف (مفعل وظاهر دائماً) -->
-                <button id="install-pwa-btn" type="button" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all cursor-pointer">
+                <button id="install-pwa-btn" type="button" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg cursor-pointer">
                     <i class="fa-solid fa-download"></i>
                     <span id="btn-install-text">تثبيت التطبيق</span>
                 </button>
-
                 <button type="button" onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2 px-3 rounded-xl border border-slate-700 cursor-pointer">
                     <i class="fa-solid fa-globe text-indigo-400"></i> <span id="lang-btn-text">English</span>
                 </button>
@@ -39,13 +38,24 @@
 
     <main class="max-w-4xl mx-auto px-4 py-12 flex-grow w-full">
         <div class="text-center mb-10">
-            <h1 id="main-title" class="text-3xl md:text-5xl font-black mb-4 text-white">أنشئ كود QR احترافي مجاناً في ثوانٍ</h1>
-            <p id="main-subtitle" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">قم بتحويل أي رابط، نص، أو معلومات اتصال إلى رمز QR قابل للمسح بأعلى جودة.</p>
+            <h1 id="main-title" class="text-3xl md:text-5xl font-black mb-4 text-white">استوديو QR الشامل: أنشئ وامسح الأكواد بثوانٍ</h1>
+            <p id="main-subtitle" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">قم بتوليد أكواد احترافية أو استخدم الكاميرا لمسح وقراءة أي رمز QR فورا.</p>
         </div>
 
-        <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl">
+        <div class="flex justify-center mb-8">
+            <div class="bg-slate-800 p-1.5 rounded-2xl border border-slate-700 flex gap-2">
+                <button type="button" onclick="switchMode('generator')" id="mode-gen-btn" class="py-2.5 px-6 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md cursor-pointer">
+                    <i class="fa-solid fa-wand-magic-sparkles ml-2"></i> <span id="lbl-mode-gen">إنشاء QR</span>
+                </button>
+                <button type="button" onclick="switchMode('scanner')" id="mode-scan-btn" class="py-2.5 px-6 rounded-xl font-bold text-sm text-slate-400 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-camera ml-2"></i> <span id="lbl-mode-scan">مسح بالكاميرا</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- المولد -->
+        <div id="view-generator" class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                
                 <div class="md:col-span-7 space-y-6">
                     <div>
                         <label id="lbl-type" class="block text-xs font-bold text-slate-400 uppercase mb-2">نوع المحتوى</label>
@@ -61,11 +71,11 @@
                     <div id="input-container" class="space-y-4">
                         <div id="sec-url" class="input-sec space-y-2">
                             <label class="block text-sm font-semibold text-slate-300">أدخل الرابط الإلكتروني:</label>
-                            <input type="url" id="i-url" value="https://example.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500">
+                            <input type="url" id="i-url" value="https://example.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none">
                         </div>
                         <div id="sec-text" class="input-sec space-y-2 hidden">
                             <label class="block text-sm font-semibold text-slate-300">أدخل النص:</label>
-                            <textarea id="i-text" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500">مرحباً بكم</textarea>
+                            <textarea id="i-text" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none">مرحباً بكم</textarea>
                         </div>
                         <div id="sec-whatsapp" class="input-sec space-y-3 hidden">
                             <div>
@@ -133,8 +143,16 @@
             </div>
         </div>
 
-        <div class="mt-10 bg-slate-800/30 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-slate-400 text-xs">
-            <span>مساحة إعلانية مخصصة (Google AdSense Space)</span>
+        <!-- الماسح الضوئي -->
+        <div id="view-scanner" class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl hidden text-center">
+            <h2 class="text-xl font-bold mb-4 text-white">وجه كاميرا هاتفك نحو كود الـ QR للمسح</h2>
+            <div id="reader" class="mx-auto max-w-md rounded-xl overflow-hidden border border-slate-700 bg-slate-900 p-2 min-h-[250px]"></div>
+            
+            <div id="scan-result-box" class="mt-6 p-4 bg-slate-900 rounded-xl border border-slate-700 hidden">
+                <p class="text-xs text-slate-400 mb-1">النتيجة المستخرجة:</p>
+                <p id="scan-result-text" class="text-indigo-400 font-mono break-all text-sm font-bold"></p>
+                <a id="scan-result-link" href="#" target="_blank" class="mt-3 inline-block bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all hidden">فتح الرابط</a>
+            </div>
         </div>
     </main>
 
@@ -147,27 +165,87 @@
             </div>
             <p>© 2026 QuickQR Studio. جميع الحقوق محفوظة.</p>
         </div>
-    </footer>
-
-    <script>
+    </footer><script>
         let currentType = 'url';
         let currentLang = 'ar';
         let deferredPrompt = null;
+        let html5QrCode = null;
 
         const tData = {
             ar: {
-                title: "أنشئ كود QR احترافي مجاناً في ثوانٍ",
-                sub: "قم بتحويل أي رابط، نص، أو معلومات اتصال إلى رمز QR قابل للمسح بأعلى جودة.",
+                title: "استوديو QR الشامل: أنشئ وامسح الأكواد بثوانٍ",
+                sub: "قم بتوليد أكواد احترافية أو استخدم الكاميرا لمسح وقراءة أي رمز QR فورا.",
+                genBtn: "إنشاء QR", scanBtn: "مسح بالكاميرا",
                 type: "نوع المحتوى", url: "رابط", text: "نص", wa: "واتساب", wifi: "واي فاي", vc: "اتصال",
                 fg: "لون الرمز", bg: "لون الخلفية", prev: "معاينة الكود الناتج", dl: "تحميل صورة (PNG)", install: "تثبيت التطبيق"
             },
             en: {
-                title: "Generate Professional QR Codes for Free",
-                sub: "Convert any link, text, or contact details into a high-quality QR code in seconds.",
+                title: "All-in-One QR Studio: Generate & Scan Instantly",
+                sub: "Create professional codes or use your camera to scan and read any QR code.",
+                genBtn: "Generate QR", scanBtn: "Scan Camera",
                 type: "CONTENT TYPE", url: "URL", text: "Text", wa: "WhatsApp", wifi: "Wi-Fi", vc: "Contact",
                 fg: "QR Color", bg: "Background Color", prev: "QR Code Preview", dl: "Download (PNG)", install: "Install App"
             }
         };
+
+        function switchMode(mode) {
+            const genView = document.getElementById('view-generator');
+            const scanView = document.getElementById('view-scanner');
+            const genBtn = document.getElementById('mode-gen-btn');
+            const scanBtn = document.getElementById('mode-scan-btn');
+
+            if (mode === 'generator') {
+                genView.classList.remove('hidden');
+                scanView.classList.add('hidden');
+                genBtn.className = "py-2.5 px-6 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md cursor-pointer";
+                scanBtn.className = "py-2.5 px-6 rounded-xl font-bold text-sm text-slate-400 hover:text-white cursor-pointer";
+                stopScanner();
+            } else {
+                genView.classList.add('hidden');
+                scanView.classList.remove('hidden');
+                scanBtn.className = "py-2.5 px-6 rounded-xl font-bold text-sm bg-indigo-600 text-white shadow-md cursor-pointer";
+                genBtn.className = "py-2.5 px-6 rounded-xl font-bold text-sm text-slate-400 hover:text-white cursor-pointer";
+                startScanner();
+            }
+        }
+
+        function startScanner() {
+            setTimeout(() => {
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode("reader");
+                }
+                if (!html5QrCode.isScanning) {
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        (decodedText) => {
+                            const box = document.getElementById('scan-result-box');
+                            const txt = document.getElementById('scan-result-text');
+                            const linkBtn = document.getElementById('scan-result-link');
+                            
+                            box.classList.remove('hidden');
+                            txt.innerText = decodedText;
+
+                            if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+                                linkBtn.href = decodedText;
+                                linkBtn.classList.remove('hidden');
+                            } else {
+                                linkBtn.classList.add('hidden');
+                            }
+                        },
+                        () => {}
+                    ).catch(err => {
+                        console.error("Camera start error:", err);
+                    });
+                }
+            }, 300);
+        }
+
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(err => console.error("Stop scanner error:", err));
+            }
+        }
 
         function switchTab(type) {
             currentType = type;
@@ -194,6 +272,8 @@
             const t = tData[currentLang];
             document.getElementById('main-title').innerText = t.title;
             document.getElementById('main-subtitle').innerText = t.sub;
+            document.getElementById('lbl-mode-gen').innerText = t.genBtn;
+            document.getElementById('lbl-mode-scan').innerText = t.scanBtn;
             document.getElementById('lbl-type').innerText = t.type;
             document.getElementById('lbl-t-url').innerText = t.url;
             document.getElementById('lbl-t-text').innerText = t.text;
@@ -262,7 +342,6 @@
             }
         }
 
-        // PWA Install Logic
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -274,9 +353,6 @@
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        console.log('App installed');
-                    }
                     deferredPrompt = null;
                 } else {
                     alert(currentLang === 'ar' 
@@ -297,7 +373,7 @@
                 generateQR();
             });
             bg.addEventListener('input', (e) => {
-                document.getElementById('color-bg-val').innerText = e.target.value;
+                document.getElementById('color-fg-val').innerText = e.target.value;
                 generateQR();
             });
             switchTab('url');
