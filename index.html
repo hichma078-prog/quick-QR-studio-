@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickQR Studio - مولد وقارئ أكواد QR السريع</title>
+    <title>QuickQR Studio - استوديو QR الاحترافي والشامل</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@
                 <span class="font-extrabold text-xl tracking-tight text-white">QuickQR Studio</span>
             </div>
             <div class="flex items-center gap-3">
-                <button id="install-pwa-btn" type="button" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg cursor-pointer">
+                <button id="install-pwa-btn" type="button" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-3.5 rounded-xl shadow-lg cursor-pointer">
                     <i class="fa-solid fa-download"></i>
                     <span id="btn-install-text">تثبيت التطبيق</span>
                 </button>
@@ -38,8 +38,8 @@
 
     <main class="max-w-4xl mx-auto px-4 py-12 flex-grow w-full">
         <div class="text-center mb-10">
-            <h1 id="main-title" class="text-3xl md:text-5xl font-black mb-4 text-white">استوديو QR الشامل: أنشئ وامسح الأكواد بثوانٍ</h1>
-            <p id="main-subtitle" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">قم بتوليد أكواد احترافية أو استخدم الكاميرا لمسح وقراءة أي رمز QR فورا.</p>
+            <h1 id="main-title" class="text-3xl md:text-5xl font-black mb-4 text-white">استوديو QR المتقدم: أنشئ، خصص، وامسح بحرية</h1>
+            <p id="main-subtitle" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">أقوى أداة متكاملة لتوليد أكواد مخصصة بإطارات، شعارات، وسجل محفوظات ذكي.</p>
         </div>
 
         <div class="flex justify-center mb-8">
@@ -53,7 +53,6 @@
             </div>
         </div>
 
-        <!-- المولد -->
         <div id="view-generator" class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                 <div class="md:col-span-7 space-y-6">
@@ -115,6 +114,25 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
+                            <label class="block text-xs font-semibold mb-2 text-slate-400">شعار الوسط (Logo)</label>
+                            <select id="select-logo" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none">
+                                <option value="none">بدون شعار</option>
+                                <option value="whatsapp">شعار واتساب</option>
+                                <option value="globe">شعار موقع /كرة</option>
+                                <option value="heart">شعار قلب</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-2 text-slate-400">الإطار الخارجي (Frame)</label>
+                            <select id="select-frame" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none">
+                                <option value="none">بدون إطار</option>
+                                <option value="scanme">إطار (Scan Me)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
                             <label class="block text-xs font-semibold mb-2 text-slate-400">لون الرمز</label>
                             <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5">
                                 <input type="color" id="color-fg" value="#000000" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0">
@@ -133,17 +151,36 @@
 
                 <div class="md:col-span-5 flex flex-col items-center justify-center bg-slate-900/50 border border-slate-700/30 rounded-xl p-6">
                     <span class="text-xs font-bold text-slate-400 uppercase mb-4">معاينة الكود الناتج</span>
-                    <div class="bg-white p-4 rounded-xl shadow-2xl flex items-center justify-center min-h-[190px] min-w-[190px]" id="qr-wrapper">
-                        <div id="qrcode"></div>
+                    
+                    <div id="frame-container" class="bg-white p-4 rounded-xl shadow-2xl flex flex-col items-center justify-center relative min-h-[190px] min-w-[190px]">
+                        <div id="frame-text" class="text-xs font-extrabold text-slate-800 mb-2 hidden uppercase tracking-wider">Scan Me</div>
+                        <div class="relative flex items-center justify-center">
+                            <div id="qrcode"></div>
+                            <div id="logo-overlay" class="absolute hidden bg-white p-1 rounded-full shadow-md text-indigo-600 text-sm">
+                                <i id="logo-icon" class="fa-solid fa-globe"></i>
+                            </div>
+                        </div>
                     </div>
-                    <button type="button" onclick="downloadQR()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-download"></i> <span id="btn-download-text">تحميل صورة (PNG)</span>
-                    </button>
+
+                    <div class="mt-6 w-full space-y-3">
+                        <button type="button" onclick="downloadQR()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-download"></i> <span id="btn-download-text">تحميل صورة (PNG)</span>
+                        </button>
+                        <button type="button" onclick="shareQR()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-share-nodes"></i> <span id="btn-share-text">مشاركة مباشرة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 border-t border-slate-700/50 pt-6">
+                <h3 class="text-xs font-bold text-slate-400 uppercase mb-3">سجل الأكواد الأخيرة المحفوظة (History)</h3>
+                <div id="history-list" class="flex gap-2 overflow-x-auto pb-2 text-xs text-slate-400">
+                    <span class="text-slate-500 italic">لا توجد أكواد سابقة بعد...</span>
                 </div>
             </div>
         </div>
 
-        <!-- الماسح الضوئي -->
         <div id="view-scanner" class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl hidden text-center">
             <h2 class="text-xl font-bold mb-4 text-white">وجه كاميرا هاتفك نحو كود الـ QR للمسح</h2>
             <div id="reader" class="mx-auto max-w-md rounded-xl overflow-hidden border border-slate-700 bg-slate-900 p-2 min-h-[250px]"></div>
@@ -173,18 +210,18 @@
 
         const tData = {
             ar: {
-                title: "استوديو QR الشامل: أنشئ وامسح الأكواد بثوانٍ",
-                sub: "قم بتوليد أكواد احترافية أو استخدم الكاميرا لمسح وقراءة أي رمز QR فورا.",
+                title: "استوديو QR المتقدم: أنشئ، خصص، وامسح بحرية",
+                sub: "أقوى أداة متكاملة لتوليد أكواد مخصصة بإطارات، شعارات، وسجل محفوظات ذكي.",
                 genBtn: "إنشاء QR", scanBtn: "مسح بالكاميرا",
                 type: "نوع المحتوى", url: "رابط", text: "نص", wa: "واتساب", wifi: "واي فاي", vc: "اتصال",
-                fg: "لون الرمز", bg: "لون الخلفية", prev: "معاينة الكود الناتج", dl: "تحميل صورة (PNG)", install: "تثبيت التطبيق"
+                fg: "لون الرمز", bg: "لون الخلفية", prev: "معاينة الكود الناتج", dl: "تحميل صورة (PNG)", share: "مشاركة مباشرة", install: "تثبيت التطبيق"
             },
             en: {
-                title: "All-in-One QR Studio: Generate & Scan Instantly",
-                sub: "Create professional codes or use your camera to scan and read any QR code.",
+                title: "Advanced QR Studio: Create, Customize & Scan",
+                sub: "The ultimate tool for generating custom codes with frames, logos, and smart history.",
                 genBtn: "Generate QR", scanBtn: "Scan Camera",
                 type: "CONTENT TYPE", url: "URL", text: "Text", wa: "WhatsApp", wifi: "Wi-Fi", vc: "Contact",
-                fg: "QR Color", bg: "Background Color", prev: "QR Code Preview", dl: "Download (PNG)", install: "Install App"
+                fg: "QR Color", bg: "Background Color", prev: "QR Code Preview", dl: "Download (PNG)", share: "Direct Share", install: "Install App"
             }
         };
 
@@ -234,16 +271,14 @@
                             }
                         },
                         () => {}
-                    ).catch(err => {
-                        console.error("Camera start error:", err);
-                    });
+                    ).catch(err => console.error(err));
                 }
             }, 300);
         }
 
         function stopScanner() {
             if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch(err => console.error("Stop scanner error:", err));
+                html5QrCode.stop().catch(err => console.error(err));
             }
         }
 
@@ -281,6 +316,7 @@
             document.getElementById('lbl-t-wifi').innerText = t.wifi;
             document.getElementById('lbl-t-vc').innerText = t.vc;
             document.getElementById('btn-download-text').innerText = t.dl;
+            document.getElementById('btn-share-text').innerText = t.share;
             document.getElementById('btn-install-text').innerText = t.install;
         }
 
@@ -313,7 +349,28 @@
 
             const fg = document.getElementById('color-fg').value;
             const bg = document.getElementById('color-bg').value;
-            document.getElementById('qr-wrapper').style.backgroundColor = bg;
+            const frameVal = document.getElementById('select-frame').value;
+            const logoVal = document.getElementById('select-logo').value;
+
+            document.getElementById('frame-container').style.backgroundColor = bg;
+
+            const frameText = document.getElementById('frame-text');
+            if (frameVal === 'scanme') {
+                frameText.classList.remove('hidden');
+            } else {
+                frameText.classList.add('hidden');
+            }
+
+            const logoOverlay = document.getElementById('logo-overlay');
+            const logoIcon = document.getElementById('logo-icon');
+            if (logoVal !== 'none') {
+                logoOverlay.classList.remove('hidden');
+                if (logoVal === 'whatsapp') logoIcon.className = 'fa-brands fa-whatsapp text-emerald-500';
+                else if (logoVal === 'globe') logoIcon.className = 'fa-solid fa-globe text-indigo-600';
+                else if (logoVal === 'heart') logoIcon.className = 'fa-solid fa-heart text-rose-500';
+            } else {
+                logoOverlay.classList.add('hidden');
+            }
 
             if (typeof QRCode !== 'undefined') {
                 new QRCode(container, {
@@ -325,6 +382,39 @@
                     correctLevel: QRCode.CorrectLevel.H
                 });
             }
+
+            saveToHistory(content);
+        }
+
+        function saveToHistory(text) {
+            let history = JSON.parse(localStorage.getItem('qr_history') || '[]');
+            if (!history.includes(text)) {
+                history.unshift(text);
+                if (history.length > 5) history.pop();
+                localStorage.setItem('qr_history', JSON.stringify(history));
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            let history = JSON.parse(localStorage.getItem('qr_history') || '[]');
+            if (history.length === 0) {
+                list.innerHTML = '<span class="text-slate-500 italic">لا توجد أكواد سابقة بعد...</span>';
+                return;
+            }
+            list.innerHTML = '';
+            history.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono truncate max-w-[150px] cursor-pointer hover:border-indigo-500';
+                span.innerText = item;
+                span.title = item;
+                span.onclick = () => {
+                    document.getElementById('i-url').value = item;
+                    switchTab('url');
+                };
+                list.appendChild(span);
+            });
         }
 
         function downloadQR() {
@@ -337,8 +427,30 @@
             if (src) {
                 const a = document.createElement('a');
                 a.href = src;
-                a.download = 'qr-code.png';
+                a.download = 'quick-qr-code.png';
                 a.click();
+            }
+        }
+
+        async function shareQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                title: 'QuickQR Studio',
+                                text: 'Check out my custom QR code!',
+                                files: [file]
+                            });
+                        } catch (err) {
+                            console.log('Share canceled', err);
+                        }
+                    } else {
+                        alert('خاصية المشاركة المباشرة غير مدعومة في متصفحك، يمكنك استخدام زر التحميل.');
+                    }
+                });
             }
         }
 
@@ -363,8 +475,9 @@
         }
 
         window.onload = () => {
-            document.querySelectorAll('input, textarea').forEach(el => {
+            document.querySelectorAll('input, textarea, select').forEach(el => {
                 el.addEventListener('input', generateQR);
+                el.addEventListener('change', generateQR);
             });
             const fg = document.getElementById('color-fg');
             const bg = document.getElementById('color-bg');
@@ -373,10 +486,11 @@
                 generateQR();
             });
             bg.addEventListener('input', (e) => {
-                document.getElementById('color-fg-val').innerText = e.target.value;
+                document.getElementById('color-bg-val').innerText = e.target.value;
                 generateQR();
             });
             switchTab('url');
+            renderHistory();
         };
     </script>
 </body>
