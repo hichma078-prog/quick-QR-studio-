@@ -1,42 +1,314 @@
-const CACHE_NAME = 'quickqr-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
-];
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickQR Studio - مولد أكواد QR السريع والمجاني</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- QR Code JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Tajawal', 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
 
-// Install Service Worker
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
-  );
-});
+    <!-- Header / Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-qrcode text-xl"></i>
+                </div>
+                <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                    QuickQR Studio
+                </span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- زر تغيير اللغة -->
+                <button onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold py-2 px-3 rounded-xl border border-slate-700 transition-all cursor-pointer">
+                    <i class="fa-solid fa-globe text-indigo-400"></i>
+                    <span id="lang-btn-text">English</span>
+                </button>
 
-// Activate Service Worker
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
-});
+                <!-- زر تثبيت التطبيق -->
+                <button id="install-pwa-btn" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all animate-pulse cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span id="btn-install-text">تثبيت التطبيق</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-// Fetch Assets
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
-    })
-  );
-});
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12 flex-grow w-full">
+        <!-- Title & Subtitle -->
+        <div class="text-center mb-10">
+            <h1 id="main-title" class="text-3xl md:text-5xl font-black mb-4 leading-tight text-white">
+                أنشئ كود QR احترافي مجاناً في ثوانٍ
+            </h1>
+            <p id="main-subtitle" class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+                قم بتحويل أي رابط، نص، أو معلومات اتصال إلى رمز QR قابل للمسح بأعلى جودة وتخصيص كامل للألوان.
+            </p>
+        </div>
+
+        <!-- Generator Card -->
+        <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                
+                <!-- Controls Column -->
+                <div class="md:col-span-7 space-y-6">
+                    <!-- Type Selector -->
+                    <div>
+                        <label id="lbl-type" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">نوع المحتوى</label>
+                        <div class="grid grid-cols-5 gap-1.5 p-1 bg-slate-900/80 rounded-xl border border-slate-700/50">
+                            <button onclick="switchTab('url')" id="btn-url" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md cursor-pointer">
+                                <i class="fa-solid fa-link text-sm mb-1"></i> <span id="btn-label-url">رابط</span>
+                            </button>
+                            <button onclick="switchTab('text')" id="btn-text" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-align-left text-sm mb-1"></i> <span id="btn-label-text">نص</span>
+                            </button>
+                            <button onclick="switchTab('whatsapp')" id="btn-whatsapp" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-sm mb-1 text-emerald-400"></i> <span id="btn-label-whatsapp">واتساب</span>
+                            </button>
+                            <button onclick="switchTab('wifi')" id="btn-wifi" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-wifi text-sm mb-1"></i> <span id="btn-label-wifi">واي فاي</span>
+                            </button>
+                            <button onclick="switchTab('vcard')" id="btn-vcard" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
+                                <i class="fa-solid fa-address-card text-sm mb-1"></i> <span id="btn-label-vcard">اتصال</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Fields Containers (Statically rendered for 100% responsiveness) -->
+                    <div id="input-container" class="space-y-4">
+                        <!-- URL Input -->
+                        <div id="section-url" class="input-section space-y-3">
+                            <label id="lbl-url-input" class="block text-sm font-semibold text-slate-300">أدخل الرابط الإلكتروني:</label>
+                            <input type="url" id="val-url" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
+                        </div>
+
+                        <!-- Text Input -->
+                        <div id="section-text" class="input-section space-y-3 hidden">
+                            <label id="lbl-text-input" class="block text-sm font-semibold text-slate-300">أدخل النص المطلوب تحويله:</label>
+                            <textarea id="val-text" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">مرحباً بكم في QuickQR Studio</textarea>
+                        </div>
+
+                        <!-- WhatsApp Input -->
+                        <div id="section-whatsapp" class="input-section space-y-3 hidden">
+                            <div>
+                                <label id="lbl-wa-phone" class="block text-xs font-semibold mb-1 text-slate-300">رقم الهاتف (مع رمز الدولة):</label>
+                                <input type="text" id="val-wa-phone" placeholder="212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                            <div>
+                                <label id="lbl-wa-msg" class="block text-xs font-semibold mb-1 text-slate-300">الرسالة التلقائية:</label>
+                                <input type="text" id="val-wa-msg" placeholder="Hello..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                        </div>
+
+                        <!-- WiFi Input -->
+                        <div id="section-wifi" class="input-section space-y-3 hidden">
+                            <div>
+                                <label id="lbl-wifi-ssid" class="block text-xs font-semibold mb-1 text-slate-300">اسم شبكة الواي فاي (SSID):</label>
+                                <input type="text" id="val-wifi-name" placeholder="MyHomeWiFi" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                            <div>
+                                <label id="lbl-wifi-pass" class="block text-xs font-semibold mb-1 text-slate-300">كلمة المرور:</label>
+                                <input type="password" id="val-wifi-pass" placeholder="Password123" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                        </div>
+
+                        <!-- vCard Input -->
+                        <div id="section-vcard" class="input-section space-y-2 hidden">
+                            <div>
+                                <label id="lbl-vc-name" class="block text-xs font-semibold mb-1 text-slate-300">الاسم الكامل:</label>
+                                <input type="text" id="val-vc-name" placeholder="Hicham Ouhazem" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                            <div>
+                                <label id="lbl-vc-phone" class="block text-xs font-semibold mb-1 text-slate-300">رقم الهاتف:</label>
+                                <input type="text" id="val-vc-phone" placeholder="+212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                            <div>
+                                <label id="lbl-vc-email" class="block text-xs font-semibold mb-1 text-slate-300">البريد الإلكتروني:</label>
+                                <input type="email" id="val-vc-email" placeholder="example@gmail.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color Customization -->
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label id="lbl-fg" class="block text-xs font-semibold mb-2 text-slate-400">لون الرمز (Foreground)</label>
+                            <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5">
+                                <input type="color" id="color-fg" value="#000000" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                                <span id="color-fg-val" class="mr-3 text-xs font-mono text-slate-300">#000000</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label id="lbl-bg" class="block text-xs font-semibold mb-2 text-slate-400">لون الخلفية (Background)</label>
+                            <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1.5">
+                                <input type="color" id="color-bg" value="#ffffff" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                                <span id="color-bg-val" class="mr-3 text-xs font-mono text-slate-300">#ffffff</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Column -->
+                <div class="md:col-span-5 flex flex-col items-center justify-center bg-slate-900/50 border border-slate-700/30 rounded-xl p-6">
+                    <span id="lbl-preview" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">معاينة الكود الناتج</span>
+                    
+                    <!-- QR Wrapper -->
+                    <div class="bg-white p-4 rounded-xl shadow-2xl flex items-center justify-center min-h-[190px] min-w-[190px]" id="qr-wrapper">
+                        <div id="qrcode"></div>
+                    </div>
+
+                    <button onclick="downloadQR()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-download"></i> <span id="btn-download">تحميل صورة (PNG)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Space Banner (مكان الإعلانات) -->
+        <div class="mt-10 bg-slate-800/30 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-slate-400 text-xs">
+            <span id="ad-space-text">مساحة إعلانية مخصصة (Google AdSense Space)</span>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-4xl mx-auto px-4 space-y-4">
+            <div class="flex justify-center gap-6 text-slate-400 font-medium">
+                <a href="privacy.html" class="hover:text-indigo-400 transition-all" id="footer-privacy">سياسة الخصوصية</a>
+                <span>•</span>
+                <a href="contact.html" class="hover:text-indigo-400 transition-all" id="footer-contact">تواصل معنا</a>
+            </div>
+            <p id="footer-rights">© 2026 QuickQR Studio. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Script -->
+    <script>
+        let qrCodeInstance = null;
+        let currentType = 'url';
+        let deferredPrompt = null;
+        let currentLang = 'ar';
+
+        const i18n = {
+            ar: {
+                title: "أنشئ كود QR احترافي مجاناً في ثوانٍ",
+                subtitle: "قم بتحويل أي رابط، نص، أو معلومات اتصال إلى رمز QR قابل للمسح بأعلى جودة وتخصيص كامل للألوان.",
+                contentType: "نوع المحتوى",
+                url: "رابط",
+                text: "نص",
+                whatsapp: "واتساب",
+                wifi: "واي فاي",
+                vcard: "اتصال",
+                enterUrl: "أدخل الرابط الإلكتروني:",
+                enterText: "أدخل النص المطلوب تحويله:",
+                waPhone: "رقم الهاتف (مع رمز الدولة):",
+                waMsg: "الرسالة التلقائية:",
+                wifiSsid: "اسم شبكة الواي فاي (SSID):",
+                wifiPass: "كلمة المرور:",
+                vcName: "الاسم الكامل:",
+                vcPhone: "رقم الهاتف:",
+                vcEmail: "البريد الإلكتروني:",
+                colorFg: "لون الرمز (Foreground)",
+                colorBg: "لون الخلفية (Background)",
+                preview: "معاينة الكود الناتج",
+                download: "تحميل صورة (PNG)",
+                privacy: "سياسة الخصوصية",
+                contact: "تواصل معنا",
+                rights: "© 2026 QuickQR Studio. جميع الحقوق محفوظة.",
+                installApp: "تثبيت التطبيق",
+                adSpace: "مساحة إعلانية مخصصة (Google AdSense Space)"
+            },
+            en: {
+                title: "Generate Professional QR Codes for Free",
+                subtitle: "Convert any link, text, or contact details into a high-quality, customizable QR code in seconds.",
+                contentType: "Content Type",
+                url: "URL",
+                text: "Text",
+                whatsapp: "WhatsApp",
+                wifi: "Wi-Fi",
+                vcard: "Contact",
+                enterUrl: "Enter URL:",
+                enterText: "Enter your text:",
+                waPhone: "Phone Number (with country code):",
+                waMsg: "Default Message:",
+                wifiSsid: "Wi-Fi Network Name (SSID):",
+                wifiPass: "Password:",
+                vcName: "Full Name:",
+                vcPhone: "Phone Number:",
+                vcEmail: "Email Address:",
+                colorFg: "QR Color (Foreground)",
+                colorBg: "Background Color",
+                preview: "QR Code Preview",
+                download: "Download (PNG)",
+                privacy: "Privacy Policy",
+                contact: "Contact Us",
+                rights: "© 2026 QuickQR Studio. All rights reserved.",
+                installApp: "Install App",
+                adSpace: "Ad Space (Google AdSense Space)"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const root = document.getElementById('html-root');
+            root.setAttribute('lang', currentLang);
+            root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            
+            document.getElementById('lang-btn-text').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+            
+            const t = i18n[currentLang];
+            document.getElementById('main-title').innerText = t.title;
+            document.getElementById('main-subtitle').innerText = t.subtitle;
+            document.getElementById('lbl-type').innerText = t.contentType;
+            document.getElementById('btn-label-url').innerText = t.url;
+            document.getElementById('btn-label-text').innerText = t.text;
+            document.getElementById('btn-label-whatsapp').innerText = t.whatsapp;
+            document.getElementById('btn-label-wifi').innerText = t.wifi;
+            document.getElementById('btn-label-vcard').innerText = t.vcard;
+            
+            document.getElementById('lbl-url-input').innerText = t.enterUrl;
+            document.getElementById('lbl-text-input').innerText = t.enterText;
+            document.getElementById('lbl-wa-phone').innerText = t.waPhone;
+            document.getElementById('lbl-wa-msg').innerText = t.waMsg;
+            document.getElementById('lbl-wifi-ssid').innerText = t.wifiSsid;
+            document.getElementById('lbl-wifi-pass').innerText = t.wifiPass;
+            document.getElementById('lbl-vc-name').innerText = t.vcName;
+            document.getElementById('lbl-vc-phone').innerText = t.vcPhone;
+            document.getElementById('lbl-vc-email').innerText = t.vcEmail;
+
+            document.getElementById('lbl-fg').innerText = t.colorFg;
+            document.getElementById('lbl-bg').innerText = t.colorBg;
+            document.getElementById('lbl-preview').innerText = t.preview;
+            document.getElementById('btn-download').innerText = t.download;
+            document.getElementById('btn-install-text').innerText = t.installApp;
+            document.getElementById('footer-privacy').innerText = t.privacy;
+            document.getElementById('footer-contact').innerText = t.contact;
+            document.getElementById('footer-rights').innerText = t.rights;
+            document.getElementById('ad-space-text').innerText = t.adSpace;
+        }
+
+        function switchTab(type) {
+            currentType = type;
+            
+            // Update buttons state
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer';
+            });
+
+            const activeBtn = document.getElementById(`btn-${type}`);
+            if (activeBtn) {
+                activeBtn
