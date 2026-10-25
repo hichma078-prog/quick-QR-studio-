@@ -34,13 +34,13 @@
             
             <div class="flex items-center gap-3">
                 <!-- زر تغيير اللغة -->
-                <button onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold py-2 px-3 rounded-xl border border-slate-700 transition-all">
+                <button onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs md:text-sm font-semibold py-2 px-3 rounded-xl border border-slate-700 transition-all cursor-pointer">
                     <i class="fa-solid fa-globe text-indigo-400"></i>
                     <span id="lang-btn-text">English</span>
                 </button>
 
                 <!-- زر تثبيت التطبيق -->
-                <button id="install-pwa-btn" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all animate-pulse">
+                <button id="install-pwa-btn" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs md:text-sm font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all animate-pulse cursor-pointer">
                     <i class="fa-solid fa-download"></i>
                     <span data-i18n="installApp">تثبيت التطبيق</span>
                 </button>
@@ -70,19 +70,19 @@
                     <div>
                         <label id="lbl-type" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">نوع المحتوى</label>
                         <div class="grid grid-cols-5 gap-1.5 p-1 bg-slate-900/80 rounded-xl border border-slate-700/50">
-                            <button onclick="setType('url')" id="btn-url" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md">
+                            <button onclick="setType('url')" id="btn-url" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md cursor-pointer">
                                 <i class="fa-solid fa-link text-sm mb-1"></i> <span id="btn-label-url">رابط</span>
                             </button>
-                            <button onclick="setType('text')" id="btn-text" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                            <button onclick="setType('text')" id="btn-text" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
                                 <i class="fa-solid fa-align-left text-sm mb-1"></i> <span id="btn-label-text">نص</span>
                             </button>
-                            <button onclick="setType('whatsapp')" id="btn-whatsapp" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                            <button onclick="setType('whatsapp')" id="btn-whatsapp" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
                                 <i class="fa-brands fa-whatsapp text-sm mb-1 text-emerald-400"></i> <span id="btn-label-whatsapp">واتساب</span>
                             </button>
-                            <button onclick="setType('wifi')" id="btn-wifi" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                            <button onclick="setType('wifi')" id="btn-wifi" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
                                 <i class="fa-solid fa-wifi text-sm mb-1"></i> <span id="btn-label-wifi">واي فاي</span>
                             </button>
-                            <button onclick="setType('vcard')" id="btn-vcard" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                            <button onclick="setType('vcard')" id="btn-vcard" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer">
                                 <i class="fa-solid fa-address-card text-sm mb-1"></i> <span id="btn-label-vcard">اتصال</span>
                             </button>
                         </div>
@@ -92,7 +92,7 @@
                     <div id="input-container" class="space-y-4">
                         <div>
                             <label id="lbl-input" class="block text-sm font-semibold mb-2 text-slate-300">أدخل الرابط الإلكتروني:</label>
-                            <input type="url" id="qr-input-val" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
+                            <input type="url" id="val-url" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
                         </div>
                     </div>
 
@@ -131,8 +131,8 @@
             </div>
         </div>
 
-        <!-- Ad Space Banner (مكان الإعلانات المستقبلي) -->
-        <div class="mt-10 bg-slate-800/30 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-slate-500 text-xs">
+        <!-- Ad Space Banner (مكان الإعلانات) -->
+        <div class="mt-10 bg-slate-800/30 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-slate-400 text-xs">
             <span>مساحة إعلانية مخصصة (Google AdSense Space)</span>
         </div>
     </main>
@@ -242,8 +242,7 @@
         }
 
         function init() {
-            attachInputListeners();
-            generateQR();
+            setType('url');
         }
 
         function setType(type) {
@@ -251,12 +250,12 @@
             const t = i18n[currentLang];
 
             document.querySelectorAll('.type-btn').forEach(btn => {
-                btn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white';
+                btn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white cursor-pointer';
             });
 
             const activeBtn = document.getElementById(`btn-${type}`);
             if (activeBtn) {
-                activeBtn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md';
+                activeBtn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md cursor-pointer';
             }
 
             const container = document.getElementById('input-container');
@@ -264,14 +263,14 @@
                 container.innerHTML = `
                     <div>
                         <label class="block text-sm font-semibold mb-2 text-slate-300">${t.enterUrl}</label>
-                        <input type="url" id="qr-input-val" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
+                        <input type="url" id="val-url" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
                     </div>
                 `;
             } else if (type === 'text') {
                 container.innerHTML = `
                     <div>
                         <label class="block text-sm font-semibold mb-2 text-slate-300">${t.enterText}</label>
-                        <textarea id="qr-input-val" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
+                        <textarea id="val-text" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
                     </div>
                 `;
             } else if (type === 'whatsapp') {
@@ -279,11 +278,11 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.waPhone}</label>
-                            <input type="text" id="wa-phone" placeholder="212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="text" id="val-wa-phone" placeholder="212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.waMsg}</label>
-                            <input type="text" id="wa-msg" placeholder="Hello..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="text" id="val-wa-msg" placeholder="Hello..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                     </div>
                 `;
@@ -292,11 +291,11 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.wifiSsid}</label>
-                            <input type="text" id="wifi-name" placeholder="MyHomeWiFi" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="text" id="val-wifi-name" placeholder="MyHomeWiFi" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.wifiPass}</label>
-                            <input type="password" id="wifi-pass" placeholder="Password123" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="password" id="val-wifi-pass" placeholder="Password123" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                     </div>
                 `;
@@ -305,33 +304,31 @@
                     <div class="space-y-2">
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcName}</label>
-                            <input type="text" id="vc-name" placeholder="Hicham Ouhazem" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="text" id="val-vc-name" placeholder="Hicham Ouhazem" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcPhone}</label>
-                            <input type="text" id="vc-phone" placeholder="+212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="text" id="val-vc-phone" placeholder="+212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcEmail}</label>
-                            <input type="email" id="vc-email" placeholder="example@gmail.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                            <input type="email" id="val-vc-email" placeholder="example@gmail.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
                         </div>
                     </div>
                 `;
             }
 
-            attachInputListeners();
+            attachListeners();
             generateQR();
         }
 
-        function attachInputListeners() {
+        function attachListeners() {
             const inputs = document.querySelectorAll('#input-container input, #input-container textarea');
             inputs.forEach(input => {
                 input.addEventListener('input', generateQR);
             });
 
-            const colorFgElem = document.getElementById('color-fg');
-            const colorBgElem = document.getElementById('color-bg');
+            const fgColor = document.getElementById('color-fg');
+            const bgColor = document.getElementById('color-bg');
 
-            if (colorFgElem) {
-                colorFgElem.oninput = (e) => {
-                    document.getElementById('col
+            if (fgColor) {
