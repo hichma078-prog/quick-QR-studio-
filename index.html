@@ -90,9 +90,9 @@
 
                     <!-- Input Fields -->
                     <div id="input-container" class="space-y-4">
-                        <div id="url-input-group">
+                        <div>
                             <label id="lbl-input" class="block text-sm font-semibold mb-2 text-slate-300">أدخل الرابط الإلكتروني:</label>
-                            <input type="url" id="qr-text" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
+                            <input type="url" id="qr-input-val" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
                         </div>
                     </div>
 
@@ -120,15 +120,20 @@
                     <span id="lbl-preview" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">معاينة الكود الناتج</span>
                     
                     <!-- QR Wrapper -->
-                    <div class="p-4 rounded-xl shadow-2xl flex items-center justify-center min-h-[200px] min-w-[200px]" id="qr-wrapper">
+                    <div class="bg-white p-4 rounded-xl shadow-2xl flex items-center justify-center min-h-[190px] min-w-[190px]" id="qr-wrapper">
                         <div id="qrcode"></div>
                     </div>
 
-                    <button onclick="downloadQR()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+                    <button onclick="downloadQR()" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-download"></i> <span id="btn-download">تحميل صورة (PNG)</span>
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Ad Space Banner (مكان الإعلانات المستقبلي) -->
+        <div class="mt-10 bg-slate-800/30 border border-dashed border-slate-700 rounded-2xl p-6 text-center text-slate-500 text-xs">
+            <span>مساحة إعلانية مخصصة (Google AdSense Space)</span>
         </div>
     </main>
 
@@ -237,22 +242,7 @@
         }
 
         function init() {
-            const colorFgElem = document.getElementById('color-fg');
-            const colorBgElem = document.getElementById('color-bg');
-
-            if (colorFgElem) {
-                colorFgElem.addEventListener('input', (e) => {
-                    document.getElementById('color-fg-val').innerText = e.target.value;
-                    generateQR();
-                });
-            }
-            if (colorBgElem) {
-                colorBgElem.addEventListener('input', (e) => {
-                    document.getElementById('color-bg-val').innerText = e.target.value;
-                    generateQR();
-                });
-            }
-
+            attachInputListeners();
             generateQR();
         }
 
@@ -274,14 +264,14 @@
                 container.innerHTML = `
                     <div>
                         <label class="block text-sm font-semibold mb-2 text-slate-300">${t.enterUrl}</label>
-                        <input type="url" id="qr-text" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
+                        <input type="url" id="qr-input-val" placeholder="https://example.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all" value="https://example.com">
                     </div>
                 `;
             } else if (type === 'text') {
                 container.innerHTML = `
                     <div>
                         <label class="block text-sm font-semibold mb-2 text-slate-300">${t.enterText}</label>
-                        <textarea id="qr-text" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
+                        <textarea id="qr-input-val" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
                     </div>
                 `;
             } else if (type === 'whatsapp') {
@@ -297,8 +287,6 @@
                         </div>
                     </div>
                 `;
-                document.getElementById('wa-phone').addEventListener('input', generateQR);
-                document.getElementById('wa-msg').addEventListener('input', generateQR);
             } else if (type === 'wifi') {
                 container.innerHTML = `
                     <div class="space-y-3">
@@ -312,8 +300,6 @@
                         </div>
                     </div>
                 `;
-                document.getElementById('wifi-name').addEventListener('input', generateQR);
-                document.getElementById('wifi-pass').addEventListener('input', generateQR);
             } else if (type === 'vcard') {
                 container.innerHTML = `
                     <div class="space-y-2">
@@ -328,3 +314,24 @@
                         <div>
                             <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcEmail}</label>
                             <input type="email" id="vc-email" placeholder="example@gmail.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                        </div>
+                    </div>
+                `;
+            }
+
+            attachInputListeners();
+            generateQR();
+        }
+
+        function attachInputListeners() {
+            const inputs = document.querySelectorAll('#input-container input, #input-container textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+
+            const colorFgElem = document.getElementById('color-fg');
+            const colorBgElem = document.getElementById('color-bg');
+
+            if (colorFgElem) {
+                colorFgElem.oninput = (e) => {
+                    document.getElementById('col
