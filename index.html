@@ -69,15 +69,21 @@
                     <!-- Type Selector -->
                     <div>
                         <label id="lbl-type" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">نوع المحتوى</label>
-                        <div class="grid grid-cols-3 gap-2 p-1 bg-slate-900/80 rounded-xl border border-slate-700/50">
-                            <button onclick="setType('url')" id="btn-url" class="type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white shadow-md">
-                                <i class="fa-solid fa-link"></i> <span id="btn-label-url">رابط</span>
+                        <div class="grid grid-cols-5 gap-1.5 p-1 bg-slate-900/80 rounded-xl border border-slate-700/50">
+                            <button onclick="setType('url')" id="btn-url" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md">
+                                <i class="fa-solid fa-link text-sm mb-1"></i> <span id="btn-label-url">رابط</span>
                             </button>
-                            <button onclick="setType('text')" id="btn-text" class="type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-medium text-sm transition-all text-slate-400 hover:text-white">
-                                <i class="fa-solid fa-align-left"></i> <span id="btn-label-text">نص</span>
+                            <button onclick="setType('text')" id="btn-text" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-align-left text-sm mb-1"></i> <span id="btn-label-text">نص</span>
                             </button>
-                            <button onclick="setType('wifi')" id="btn-wifi" class="type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-medium text-sm transition-all text-slate-400 hover:text-white">
-                                <i class="fa-solid fa-wifi"></i> <span id="btn-label-wifi">واي فاي</span>
+                            <button onclick="setType('whatsapp')" id="btn-whatsapp" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                                <i class="fa-brands fa-whatsapp text-sm mb-1 text-emerald-400"></i> <span id="btn-label-whatsapp">واتساب</span>
+                            </button>
+                            <button onclick="setType('wifi')" id="btn-wifi" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-wifi text-sm mb-1"></i> <span id="btn-label-wifi">واي فاي</span>
+                            </button>
+                            <button onclick="setType('vcard')" id="btn-vcard" class="type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-address-card text-sm mb-1"></i> <span id="btn-label-vcard">اتصال</span>
                             </button>
                         </div>
                     </div>
@@ -152,11 +158,18 @@
                 contentType: "نوع المحتوى",
                 url: "رابط",
                 text: "نص",
+                whatsapp: "واتساب",
                 wifi: "واي فاي",
+                vcard: "اتصال",
                 enterUrl: "أدخل الرابط الإلكتروني:",
                 enterText: "أدخل النص المطلوب تحويله:",
+                waPhone: "رقم الهاتف (مع رمز الدولة):",
+                waMsg: "الرسالة التلقائية:",
                 wifiSsid: "اسم شبكة الواي فاي (SSID):",
                 wifiPass: "كلمة المرور:",
+                vcName: "الاسم الكامل:",
+                vcPhone: "رقم الهاتف:",
+                vcEmail: "البريد الإلكتروني:",
                 colorFg: "لون الرمز (Foreground)",
                 colorBg: "لون الخلفية (Background)",
                 preview: "معاينة الكود الناتج",
@@ -168,15 +181,22 @@
             },
             en: {
                 title: "Generate Professional QR Codes for Free",
-                subtitle: "Convert any link, text, or Wi-Fi credentials into a high-quality, customizable QR code in seconds.",
+                subtitle: "Convert any link, text, or contact details into a high-quality, customizable QR code in seconds.",
                 contentType: "Content Type",
                 url: "URL",
                 text: "Text",
+                whatsapp: "WhatsApp",
                 wifi: "Wi-Fi",
+                vcard: "Contact",
                 enterUrl: "Enter URL:",
                 enterText: "Enter your text:",
+                waPhone: "Phone Number (with country code):",
+                waMsg: "Default Message:",
                 wifiSsid: "Wi-Fi Network Name (SSID):",
                 wifiPass: "Password:",
+                vcName: "Full Name:",
+                vcPhone: "Phone Number:",
+                vcEmail: "Email Address:",
                 colorFg: "QR Color (Foreground)",
                 colorBg: "Background Color",
                 preview: "QR Code Preview",
@@ -196,14 +216,15 @@
             
             document.getElementById('lang-btn-text').innerText = currentLang === 'ar' ? 'English' : 'العربية';
             
-            // Update Text Contents
             const t = i18n[currentLang];
             document.getElementById('main-title').innerText = t.title;
             document.getElementById('main-subtitle').innerText = t.subtitle;
             document.getElementById('lbl-type').innerText = t.contentType;
             document.getElementById('btn-label-url').innerText = t.url;
             document.getElementById('btn-label-text').innerText = t.text;
+            document.getElementById('btn-label-whatsapp').innerText = t.whatsapp;
             document.getElementById('btn-label-wifi').innerText = t.wifi;
+            document.getElementById('btn-label-vcard').innerText = t.vcard;
             document.getElementById('lbl-fg').innerText = t.colorFg;
             document.getElementById('lbl-bg').innerText = t.colorBg;
             document.getElementById('lbl-preview').innerText = t.preview;
@@ -216,11 +237,9 @@
         }
 
         function init() {
-            const qrTextElem = document.getElementById('qr-text');
             const colorFgElem = document.getElementById('color-fg');
             const colorBgElem = document.getElementById('color-bg');
 
-            if (qrTextElem) qrTextElem.addEventListener('input', generateQR);
             if (colorFgElem) {
                 colorFgElem.addEventListener('input', (e) => {
                     document.getElementById('color-fg-val').innerText = e.target.value;
@@ -242,12 +261,12 @@
             const t = i18n[currentLang];
 
             document.querySelectorAll('.type-btn').forEach(btn => {
-                btn.className = 'type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-medium text-sm transition-all text-slate-400 hover:text-white';
+                btn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all text-slate-400 hover:text-white';
             });
 
             const activeBtn = document.getElementById(`btn-${type}`);
             if (activeBtn) {
-                activeBtn.className = 'type-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white shadow-md';
+                activeBtn.className = 'type-btn flex flex-col items-center justify-center py-2 px-1 rounded-lg font-medium text-xs transition-all bg-indigo-600 text-white shadow-md';
             }
 
             const container = document.getElementById('input-container');
@@ -262,9 +281,24 @@
                 container.innerHTML = `
                     <div>
                         <label class="block text-sm font-semibold mb-2 text-slate-300">${t.enterText}</label>
-                        <textarea id="qr-text" rows="3" placeholder="..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
+                        <textarea id="qr-text" rows="3" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-white outline-none transition-all">${currentLang === 'ar' ? 'مرحباً بكم في QuickQR Studio' : 'Welcome to QuickQR Studio'}</textarea>
                     </div>
                 `;
+            } else if (type === 'whatsapp') {
+                container.innerHTML = `
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-300">${t.waPhone}</label>
+                            <input type="text" id="wa-phone" placeholder="212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-300">${t.waMsg}</label>
+                            <input type="text" id="wa-msg" placeholder="Hello..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                        </div>
+                    </div>
+                `;
+                document.getElementById('wa-phone').addEventListener('input', generateQR);
+                document.getElementById('wa-msg').addEventListener('input', generateQR);
             } else if (type === 'wifi') {
                 container.innerHTML = `
                     <div class="space-y-3">
@@ -280,102 +314,17 @@
                 `;
                 document.getElementById('wifi-name').addEventListener('input', generateQR);
                 document.getElementById('wifi-pass').addEventListener('input', generateQR);
-            }
-
-            const newQrText = document.getElementById('qr-text');
-            if (newQrText) newQrText.addEventListener('input', generateQR);
-
-            generateQR();
-        }
-
-        function generateQR() {
-            const qrContainer = document.getElementById('qrcode');
-            if (!qrContainer) return;
-            qrContainer.innerHTML = '';
-
-            let qrContent = '';
-            if (currentType === 'url' || currentType === 'text') {
-                const textElem = document.getElementById('qr-text');
-                qrContent = textElem ? textElem.value.trim() : '';
-            } else if (currentType === 'wifi') {
-                const name = document.getElementById('wifi-name').value.trim();
-                const pass = document.getElementById('wifi-pass').value.trim();
-                qrContent = `WIFI:S:${name};T:WPA;P:${pass};;`;
-            }
-
-            if (!qrContent) qrContent = 'QuickQR Studio';
-
-            const fgColor = document.getElementById('color-fg').value;
-            const bgColor = document.getElementById('color-bg').value;
-
-            document.getElementById('qr-wrapper').style.backgroundColor = bgColor;
-
-            qrCodeInstance = new QRCode(qrContainer, {
-                text: qrContent,
-                width: 180,
-                height: 180,
-                colorDark: fgColor,
-                colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-
-        function downloadQR() {
-            const img = document.querySelector('#qrcode img');
-            const canvas = document.querySelector('#qrcode canvas');
-            let imageSrc = '';
-
-            if (img && img.src) {
-                imageSrc = img.src;
-            } else if (canvas) {
-                imageSrc = canvas.toDataURL("image/png");
-            }
-
-            if (imageSrc) {
-                const link = document.getElementById('a');
-                const linkElem = document.createElement('a');
-                linkElem.href = imageSrc;
-                linkElem.download = 'quick-qr-code.png';
-                document.body.appendChild(linkElem);
-                linkElem.click();
-                document.body.removeChild(linkElem);
-            }
-        }
-
-        window.onload = init;
-
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA Ready'))
-                    .catch(err => console.log('PWA Error', err));
-            });
-        }
-
-        // PWA Install Prompt
-        const installBtn = document.getElementById('install-pwa-btn');
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installBtn) {
-                installBtn.classList.remove('hidden');
-                installBtn.classList.add('flex');
-            }
-        });
-
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        installBtn.classList.add('hidden');
-                    }
-                    deferredPrompt = null;
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            } else if (type === 'vcard') {
+                container.innerHTML = `
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcName}</label>
+                            <input type="text" id="vc-name" placeholder="Hicham Ouhazem" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcPhone}</label>
+                            <input type="text" id="vc-phone" placeholder="+212600000000" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1 text-slate-300">${t.vcEmail}</label>
+                            <input type="email" id="vc-email" placeholder="example@gmail.com" class="w-full bg-slate-900/90 border border-slate-700 focus:border-indigo-500 rounded-xl px-3 py-2 text-white text-sm outline-none">
